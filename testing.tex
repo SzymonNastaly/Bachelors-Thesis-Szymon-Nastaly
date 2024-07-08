@@ -1,27 +1,13 @@
 \chapter{Testing on Websites}
 
-We will test the CookieAudit extension on a diverse set of relevant websites. 
+\section{Creating a Set of Websites}
 
-\section{Composition of Websites}
+We will create two distinct sets of websites to test and evaluate the CookieAudit browser extension. 
+The websites will be a random sample from the dataset of Bouhoula et al.~\cite{bouhoula2023automated}. 
 
-\subsection{Factors}
+The first set will contain 50 websites from 5 countries (France, Germany, Poland, Ireland and the USA).
+We will only consider the 1000 most popular websites in those countries by relying on the Chrome User Experience report~\cite{GoogleCrux}. 
 
-There are many factors that can influence the cookie compliance of websites.
-Our set of websites will need to contain representative websites across those factors.
+The second set will contain 20 websites each using one of the 20 most common Consent Management Providers. CookieAudit has to work with common CMPs to be a practical tool.
 
-\subsubsection{Countries}
-
-To cover potential geographical differences in compliance we will include websites from different countries in the European Union.
-
-\subsubsection{Consent Management Platforms and Custom Notices}
-
-Website developers can implement cookie consent functionality either themselves or by using Consent Management Platforms, which are developed by different providers.
-Therefore, our testing set will contain websites from both groups.
-
-\paragraph{Example Paragraph}
-
-Dummy text.
-
-\subparagraph{Example Subparagraph}
-
-Dummy text.
+After manually running the CookieAudit browser extension on the websites, we will compare the results with the findings of Bouhoula et al.~\cite{bouhoula2023automated}.

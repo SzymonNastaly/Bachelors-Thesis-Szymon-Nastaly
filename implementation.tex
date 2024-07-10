@@ -8,10 +8,10 @@
 	\label{fig:screenshot-popup}
 \end{figure}
 The primary way for users to interact with a browser extension is through its popup.
-This small window can be opened by clicking the extension's action icon in the browser toolbar.
+It can be opened by clicking the extension's action icon in the browser toolbar.
 Popups are programmed using the same web technologies as websites: HTML, CSS, and JavaScript.
 In CookieAudit, users can initiate a website scan, stop it, or download a report summarizing the scan results via the popup.
-Additionally, CookieAudit displays real-time information about the scan's progress within the popup.
+Additionally, CookieAudit displays real-time information about the scan's progress.
 For developing the popup's user interface, we chose to use the React JavaScript library.
 React offers a declarative programming model that keeps the displayed data synchronized with the underlying data storage.
 
@@ -34,7 +34,7 @@ This qualifier has been used by Khandelwal et al.~\cite{khandelwal2023automated}
 \subsection{User-Aided Selection}
 Fortunately, CookieAudit is a browser extension that is used manually.
 We can therefore rely on user help by using a cookie notice selector tool.
-To specify the element containing a notice, the user only needs to hover the mouse over it and then confirm the selection. 
+To specify the element containing a notice, users only needs to hover the mouse over it and then confirm the selection. 
 An example can be seen in Figure \ref{fig:screenshot-selection}.
 
 \begin{figure}
@@ -57,12 +57,12 @@ Additionally, they can communicate with the core of the browser extension via me
 
 The activated selector listens for cursor movement by the user. 
 On movement, it reads the coordinates of the cursor and determines the HTML element at that position.
-The selector changes the styling of the determined element to provide the user with visual feedback.
-By clicking on the highlighted element, the user can make an initial selection.
-CookieAudit needs the user to select the element corresponding to the complete cookie notice. 
+The selector changes the styling of the determined element to provide users with visual feedback.
+By clicking on the highlighted element, users can make an initial selection.
+CookieAudit needs users to select the element corresponding to the complete cookie notice. 
 Sometimes the desired element is only a container whose area is entirely filled out by the children (see Figure \ref{fig:notice-fillout}).
 In this case, every click inside the notice will select a child element rather than the entire notice container. 
-Therefore, the user won't be able to select the whole notice by simply hovering the cursor.
+Therefore, users won't be able to select the whole notice by simply hovering the cursor.
 
 \begin{figure}
 	\centering
@@ -90,7 +90,7 @@ Therefore, the user won't be able to select the whole notice by simply hovering 
 			\draw [fill=purple!10] (0.2,-2) rectangle (3.8,-2.6) node[midway, text=purple] {Child 3};
 		\end{tikzpicture}     
 	\end{minipage}
-	\caption{A cookie notices that is filled by children (left) will Right: When hovering over white area, the whole notice will be selected.}
+	\caption{Any location in the left notice will map to one of the children. Only the white area in the right notice will be mapped to the whole notice.}
 	\label{fig:notice-fillout}
 \end{figure}
 
@@ -101,13 +101,13 @@ In the end, the selection can be confirmed with a separate button.
 Because of the heterogeneity of the web, we encountered several edge cases resulting from the implementation details of cookie notices. 
 Next, we will present our solutions.
 
-\subsubsection{Inline Frames}
-Inline frames allow developers to embed another HTML context by linking to a URL~\cite{iframeMdn}.
+\subsubsection{Inline Frame}
+An inline frame allows developers to embed another HTML context by linking to a URL~\cite{iframeMdn}.
 Some websites implement cookie notices with an \verb|iframe| that refers to a Consent Management Platform.
-To enable the user to select the cookie notice, we inject the \emph{selector} content script not only into the original web page, but also into all \verb|iframe| elements.
+To enable users to select the cookie notice, we inject the \emph{selector} content script not only into the original web page, but also into all \verb|iframe| elements.
 
 \subsubsection{Shadow DOM}
-A shadow DOM separates elements inside of it from the influence of the main document's JavaScript and CSS~\cite{shadowDomMdn}.2024.08
+A shadow DOM separates elements inside of it from the influence of the main document's JavaScript and CSS~\cite{shadowDomMdn}.
 Some developers use this feature to integrate cookie notices into their web page.
 This encapsulation prevents our selector content script from directly accessing the cookie notice elements. 
 To address this, we implement a solution during user notice selection:
@@ -119,9 +119,15 @@ If so, we explicitly enter the shadow DOM context and query for the element at t
 
 
 \subsubsection{Dialog Element}
+The \verb|dialog| element is an HTML element that can be used to build dialog boxes such as cookie notices.
+When opened, it displays above all elements of the website and will cover elements with arbitrary \verb|z-index| values. 
+Multiple \verb|dialog| elements are stacked based on their opening order, with the most recent dialog displayed on top.
+If used to display a cookie notice, a dialog element would also hide our selector context menu.
+Therefore, we have implemented the menu with a \verb|dialog| element.
+By opening our dialog after the cookie notice renders, we ensure that the menu will be visible and accessible to CookieAudit users.
 
 \section{Cookie Notice Analysis}
-As a part of the scan, CookieAudit needs analyze the text and buttons inside the cookie notice.
+As a part of the scan, CookieAudit needs to analyze the text and buttons inside the cookie notice.
 CookieAudit automatically checks if the text inside a cookie notice declares the actual cookie usage properly. Secondly, it classifies the buttons by their functionality, e.g., \emph{Open Settings}.
 
 We will use functionality implemented in the automated crawler by Bouhoula et al.~\cite{bouhoula2023automated} to extract and classify the elements of the cookie notice. 
@@ -135,6 +141,7 @@ To identify the clickable elements inside the notice we consider all elements of
 (ii) has the attribute \verb|onclick| or 
 (iii) changes the mouse to a pointer when hovered.
 We removed the filtering qualifier of a non-negative \verb|tabindex| because we found that...
+\textcolor{red}{in progress}
 
 \subsection{Classification}
 
@@ -143,6 +150,7 @@ We removed the filtering qualifier of a non-negative \verb|tabindex| because we 
 Cookie Notices can offer a settings option to accept and reject specific cookie categories.
 If a \emph{Settings} button is available in a cookie notice, clicking it may (i) change the content of the current notice to display the settings, (ii) open a new settings notice or (iii) open a separate web page with the settings.
 CookieAudit needs to also analyze the settings, because they may contain relevant text or interactive elements. 
+\textcolor{red}{in progress}
 
 \section{Dark Pattern Detection}
 \section{Managing Page Loads and Changes}

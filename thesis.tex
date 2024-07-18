@@ -51,6 +51,7 @@
 
 %% Added to use tikz diagrams
 \usepackage{tikz}
+\usetikzlibrary{shapes,arrows,positioning}
 
 %% We unfortunately need this for the Rules chapter.  Remove it
 %% afterwards; or at least NEVER use its underlining features.
@@ -121,6 +122,7 @@ backend=biber
 \mainmatter
 
 %% Your real content!
+\input{background}
 \input{implementation}
 \input{testing}
 

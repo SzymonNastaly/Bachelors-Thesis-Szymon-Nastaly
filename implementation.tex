@@ -31,9 +31,9 @@ The \emph{z-index} is a CSS property of HTML elements that makes elements with a
 Because a user should quickly see a cookie notice, websites can use a high \emph{z-index} on the notice to let it cover the rest of the website. 
 This qualifier has been used by Khandelwal et al.~\cite{khandelwal2023automated} and Bouhoula et al.~\cite{bouhoula2023automated}.
 
-\subsection{User-Aided Selection} \label{subsec:userAidedSelection}
-Fortunately, CookieAudit is a browser extension that is used manually.
-We can therefore rely on user help by using a cookie notice selector tool.
+\subsection{User-Aided Selection} \label{subsec:user-aided-selection}
+CookieAudit is intended for semi-automated website analysis.
+We can therefore rely on user help by using a cookie notice picker tool.
 To specify the element containing a notice, users only needs to hover the mouse over it and then confirm the selection. 
 An example can be seen in \cref{fig:screenshot-selection}.
 
@@ -51,13 +51,12 @@ An example can be seen in \cref{fig:screenshot-selection}.
 	\label{fig:screenshot-selection}
 \end{figure}
 
-The selector is implemented as a \emph{content script}. Content scripts are JavaScript programs which are executed in the context of a web page. 
-They can read and change the HTML and CSS of the web page. 
-Additionally, they can communicate with the core of the browser extension via messages and by reading and writing to a shared key-value store.
+The picker is implemented as a \emph{Content Script}. 
+As explained in \cref{subsec:content-scripts}, content scripts are JavaScript programs that can interact with the web page.
 
-The activated selector listens for cursor movement by the user. 
+The activated picker tool listens for cursor movement by the user. 
 On movement, it reads the coordinates of the cursor and determines the HTML element at that position.
-The selector changes the styling of the determined element to provide users with visual feedback.
+The picker changes the styling of the determined element to provide users with visual feedback.
 By clicking on the highlighted element, users can make an initial selection.
 CookieAudit needs users to select the element corresponding to the complete cookie notice. 
 Sometimes the desired element is only a container whose area is entirely filled out by the children (see \cref{fig:notice-fillout}).
@@ -104,12 +103,12 @@ Next, we will present our solutions.
 \subsubsection{Inline Frame}
 An inline frame allows developers to embed another HTML context by linking to a URL~\cite{iframeMdn}.
 Some websites implement cookie notices with an \verb|iframe| that refers to a Consent Management Platform.
-To enable users to select the cookie notice, we inject the \emph{selector} content script not only into the original web page, but also into all \verb|iframe| elements.
+To enable users to select the cookie notice, we inject the \emph{picker tool} content script not only into the original web page, but also into all \verb|iframe| elements.
 
 \subsubsection{Shadow DOM}
 A shadow DOM separates elements inside of it from the influence of the main document's JavaScript and CSS~\cite{shadowDomMdn}.
 Some developers use this feature to integrate cookie notices into their web page.
-This encapsulation prevents our selector content script from directly accessing the cookie notice elements. 
+This encapsulation prevents our picker content script from directly accessing the cookie notice elements. 
 To address this, we implement a solution during user notice selection:
 
 As described before, we continuously query for the element that is located at the user's cursor coordinates.
@@ -122,7 +121,7 @@ If so, we explicitly enter the shadow DOM context and query for the element at t
 The \verb|dialog| element is an HTML element that can be used to build dialog boxes such as cookie notices.
 When opened, it displays above all elements of the website and will cover elements with arbitrary \verb|z-index| values. 
 Multiple \verb|dialog| elements are stacked based on their opening order, with the most recent dialog displayed on top.
-If used to display a cookie notice, a dialog element would also hide our selector context menu.
+If used to display a cookie notice, a dialog element would also hide our picker tool context menu.
 Therefore, we have implemented the menu with a \verb|dialog| element.
 By opening our dialog after the cookie notice renders, we ensure that the menu will be visible and accessible to CookieAudit users.
 
@@ -176,14 +175,14 @@ CookieAudit detects this situation if one of the following criteria holds:
     \item the cookie notice is covered by another element. CookieAudit runs \verb|elementFromPoint()| at the coordinates of the cookie notice center. If the returned element is not the notice or contained in the notice, we consider the notice covered.
 \end{itemize}
 
-To identify the settings element and start the analysis, CookieAudit activates the \emph{Cookie Notice Selector} (as described in \cref{subsec:userAidedSelection}) and lets the user manually select the settings notice.
+To identify the settings element and start the analysis, CookieAudit activates the \emph{Cookie Notice Picker} (as described in \cref{subsec:user-aided-selection}) and lets the user manually select the settings notice.
 
 \subsubsection{New Web Page}
 CookieAudit stores the URL of the web page before the interactive element click and compares it to the URL of the web page after the click.
 If it has changed, CookieAudit classifies the outcome as a new notice on a separate web page.
 
-Also in this case CookieAudit starts the \emph{Cookie Notice Selector}. 
-The selector can be used to select both settings that are part of the normal flow of the web page, or displayed as a hovering dialog.
+Also in this case CookieAudit starts the \emph{Cookie Notice Picker}. 
+The picker can be used to select both settings that are part of the normal flow of the web page, or displayed as a hovering dialog.
 After the user selection and subsequent settings analysis, CookieAudit returns to the URL where the scan was started.
 
 \subsubsection{Same Cookie Notice}

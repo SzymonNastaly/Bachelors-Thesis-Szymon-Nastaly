@@ -32,9 +32,16 @@ Service workers operate asynchronously on a separate thread, preventing interfer
 They are ephemeral, terminating when idle and restarting to handle events. Developers must persist important application state to storage (see \cref{subsec:storage}) rather than relying on in-memory variables, as these are reset upon termination.
 
 \subsection{Content Scripts} \label{subsec:content-scripts}
-Content scripts are JavaScript programs which are executed in the context of a web page.
-They can read and change the HTML and CSS of the web page. 
-Additionally, they can communicate with the core of the browser extension via messages and by reading and writing to a shared key-value store.
+Content scripts are JavaScript programs injected into web pages. 
+They can access and modify the page's HTML structure and CSS styles.
+By default\footnote{
+Developers can deactivate this isolation by setting the execution world to \texttt{MAIN}. Then, the content script will be able to e.g., read variables of the web page JavaScript.
+}, content scripts run in an isolated environment, separate from the page's own JavaScript.
+This isolation prevents direct access between the content script and page script.
+Variables are not shared, and functions from one context cannot be called by the other.
+Content scripts have limited access to WebExtensions API. 
+For example, they cannot change the current tab's URL.
+To interact with the rest of the extension, content scripts use messaging and a shared key-value store (see \cref{subsec:storage}).
 
 \subsection{Communication}
 From the perspective of the developer, the extension service worker and the different content scripts run in separate environments. 
@@ -106,8 +113,8 @@ Other breaking changes introduced in Manifest version 3 are
 
 
 
-\section{GDPR and ePrivacy Directive}
-Both the GDPR~\cite{gdpr2016} and ePrivacy Directive~\cite{privacydirective2016} have regulated the processing of personal information for entities targeting people inside the European Union.
+\section{General Data Protection Regulation and ePrivacy Directive} \label{sec:legal}
+Both the General Data Protection Regulation (GDPR)~\cite{gdpr2016} and ePrivacy Directive~\cite{privacydirective2016} have regulated the processing of personal information for entities targeting people inside the European Union.
 The GDPR generally requires a legal basis defined in Article 6 for the processing of personally identifiable information such as names, identification numbers or location data.
 If an entity such as a company wants to use the data for analytics or advertising, the user has to provide consent that is "freely given, specific, informed and unambiguous indication of the data subject's agreement to the processing of personal data relating to him or her" (Recital 32 GDPR).
 The 2002 ePrivacy Directive similarly requires consent for the usage of technologies like cookies, except in cases where they are necessary\footnote{An example of a functionally required cookie would be a token to let the user stay signed into his account across browser sessions.} for the functionality of a website.

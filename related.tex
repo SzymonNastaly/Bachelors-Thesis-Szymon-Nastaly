@@ -1,3 +1,37 @@
 \chapter{Related Work}
 
-s
+\textcolor{red}{wip}
+
+\section{Evaluation of broad GDPR Compliance}
+Since the introduction of the GDPR (see \cref{sec:legal}) there has been research that examined the changes and compliance of websites.
+\textcolor{red}{We have to name some concrete research that spans: non-interacting testing, manual testing, CMP focused testing, maybe also country focused testing.}. 
+Those papers have aimed to show a summarized pictured of adherence across many websites.
+
+\section{Inspection of Individual Web Pages}
+There have also been tools aimed at users for evaluating the compliance of individual websites. 
+They have also lacked in generality (because they focused on certain CMPs), ...
+
+\subsection{EDPB Website Auditing Tool}
+\emph{EDBP WAT} is an auditing tool developed by Jérôme Gorin for the European Data Protection Board~\cite{gorin2024edpb}.
+It uses a custom Chromium interface to analyze how sites collect and store browser data, as well as inspect network traffic. 
+Users can create analysis sessions with multiple scenarios and then manually interact with the website.
+EDBP categorizes cookies, local storage, web beacons\footnote{
+A web beacon (or tracking pixel) is a method for tracking users. 
+By including an image (often invisible) from an external server, visitors can be monitored~\cite{smith1999web}.
+}, and HTTP requests by matching against tracker databases.
+The tool generates customizable reports in various formats for different inspection needs.
+
+\subsection{Cookie Glasses}
+Matte et al.~\cite{matte2020cookiebannersrespectchoice} have investigated the compliance of cookie banners implementing IAB Europe’s Transparency and Consent Framework (TCF) and found that they did not always respect the users choice.
+As part of the research the browser extension \emph{Cookie Glasses} was developed.
+It aimed to help website developers verify their compliance.
+It was restricted to TCF cookie notices and in particular TCF version 1 (v2.2 is most recent).
+As of July 2024, the development of Cookie Glasses is abandoned.
+
+\subsection{Privacy Pioneer}
+\emph{Privacy Pioneer} (by Zimmeck et al.~\cite{zimmeck2024pioneer}) is a Firefox-only browser extension for real-time detection of GDPR relevant data collection.
+The extension monitors web traffic by analyzing HTTP messages using the \verb|webRequest| API.
+It searches the traffic for location information, monetization practices, tracking methods and personal data. 
+For this, it uses a combination of regular expression matching, URL list comparisons and a machine learning model trained to detect location data.
+In contrast to CookieAudit, Privacy Pioneer does not analyze cookies or cookie notices.
+

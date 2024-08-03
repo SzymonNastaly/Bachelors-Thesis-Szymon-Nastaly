@@ -11,15 +11,16 @@ Those papers have aimed to show a summarized pictured of adherence across many w
 There have also been tools aimed at users for evaluating the compliance of individual websites. 
 They have also lacked in generality (because they focused on certain CMPs), ...
 
-\subsection{EDPB Website Auditing Tool}
+\subsection{European Data Protection Board Website Auditing Tool}
 \emph{EDBP WAT} is an auditing tool developed by Jérôme Gorin for the European Data Protection Board~\cite{gorin2024edpb}.
 It uses a custom Chromium interface to analyze how sites collect and store browser data, as well as inspect network traffic. 
-Users can create analysis sessions with multiple scenarios and then manually interact with the website.
-EDBP categorizes cookies, local storage, web beacons\footnote{
+%Users can create analysis sessions with multiple scenarios and then manually interact with the website.
+Users can record different scenarios, e.g., the rejection of cookies and subsequent manual interaction with the website.
+EDBP then categorizes the collected cookies, local storage, web beacons\footnote{
 A web beacon (or tracking pixel) is a method for tracking users. 
-By including an image (often invisible) from an external server, visitors can be monitored~\cite{smith1999web}.
-}, and HTTP requests by matching against tracker databases.
-The tool generates customizable reports in various formats for different inspection needs.
+Visitors can be monitored by including an image (often invisible) from an external server inside the website.~\cite{smith1999web}.
+} and HTTP requests by matching against tracker databases.
+The tool generates customizable reports to export the findings.
 
 \subsection{Cookie Glasses}
 Matte et al.~\cite{matte2020cookiebannersrespectchoice} have investigated the compliance of cookie banners implementing IAB Europe’s Transparency and Consent Framework (TCF) and found that they did not always respect the users choice.

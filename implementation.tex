@@ -21,7 +21,10 @@ However, cookie notices are implemented as standard HTML elements, which makes u
 Next, we present some approaches to find cookie notices in websites.
 
 \subsection{Automatic Selection}
-\subsubsection{Crowd-sourced Selectors}
+
+
+
+\subsubsection{Crowd-Sourced Selectors}
 HTML elements can be identified with \emph{selectors}. 
 Crowd-sourced efforts, such as EasyList Cookie, maintain lists of cookie notice selectors.
 Automated crawlers by Kampanos et al.~\cite{kampanos2021accept} and Bouhoula et al.~\cite{bouhoula2023automated} have used EasyList to find potential cookie notices on websites.
@@ -125,10 +128,10 @@ Therefore, we have implemented the menu with a \verb|dialog| element.
 By opening our dialog after the cookie notice renders, we ensure that the menu will be visible and accessible to CookieAudit users.
 
 \section{Cookie Notice Analysis}
-As a part of the scan, CookieAudit needs to analyze the text and buttons inside the cookie notice.
+After detecting the cookie notice, CookieAudit analyzes its text and buttons.
 CookieAudit automatically checks if the text inside a cookie notice declares the actual cookie usage properly. Secondly, it classifies the buttons by their functionality, e.g., \emph{Open Settings}.
 
-We will use functionality implemented in the automated crawler by Bouhoula et al.~\cite{bouhoula2023automated} to extract and classify the elements of the cookie notice. 
+We use functionality implemented in the automated crawler by Bouhoula et al.~\cite{bouhoula2023automated} to extract and classify the elements of the cookie notice. 
 
 \subsection{Extraction} \label{subsec:extraction}
 To extract the cookie notice text, we iterate through all visible elements inside the notice and concatenate their text content.
@@ -144,33 +147,32 @@ Furthermore we consider elements that, when hovered over, change the mouse to a 
 The last criterion was added based on manual testing, as it captured some interactive elements missed by the other rules in rare cases.
 
 \subsection{Classification}
-From the extracted data (\cref{subsec:extraction}) we want to learn if the text correctly declares the cookie purpose and the function of the interactive elements. 
-
+We then process the extracted data to evaluate, whether the text correctly declares the cookie purpose and the function of the interactive elements.
 We rely on the machine learning models developed by Bouhoula et al.~\cite{bouhoula2023automated} for the classificatoin
 
 \subsection{Exploration}
 Cookie notices can offer additional settings.
-The settings may contain additional text with a declaration of the cookie purpose, or interactive elements e.g, to reject specific cookie categories or even all non-necessary cookies.
+The settings may contain additional text with a declaration of the cookie purpose, or interactive elements, e.g, to reject specific cookie categories or even all non-necessary cookies.
 If a \emph{Settings} button is available in a cookie notice, clicking it may change the content of the current notice to display the settings, open a new settings notice or open a separate web page with the settings.
 Because of the mentioned text contents and interactive elements, CookieAudit needs to analyze the settings.
 
 Similar to the approach implemented by Bouhoula et al.~\cite{bouhoula2023automated}, CookieAudit clicks on all interactive elements that were classified as \emph{Settings}.
 If no interactive elements were classified as \emph{Settings}, CookieAudit alternatively uses three \emph{Other} elements. 
-In particular elements that are located on the bottom of the cookie notice (by sorting the \emph{Other} elements by their y-coordinates) are used.
+In particular, the \emph{Other} elements are sorted by their y-coordinates, such that elements that are located on the bottom of the cookie notice are used.
 This simple heuristic is based on the observation that the \emph{Settings} button is often located at the bottom.
-After the \emph{Settings} have been opened and identified, CookieAudit will again proceed as for the original cookie notice: retrieving and analyzing the text and interactive elements.
+After the \emph{Settings} have been opened and identified, CookieAudit will again proceed as for the original cookie notice, retrieving and analyzing the text and interactive elements.
 CookieAudit adds the elements of type \emph{Reject}, \emph{Close} and \emph{Save Settings} to the \textsc{ieToInteract} array as a sequence of selectors: first the \emph{Settings} element selector, then the second layer element selector. 
 
 Based on the work by Bouhoula et al.~\cite{bouhoula2023automated}, we implemented the detection and handling of the following three scenarios:
 
 \subsubsection{New Cookie Notice}
-The cookie notice settings can be displayed inside a new notice that appears e.g., above the original cookie notice. 
+The cookie notice settings can be displayed inside a new notice that appears, e.g., above the original cookie notice. 
 CookieAudit detects this situation if one of the following criteria holds:
 
 \begin{itemize} 
-    \item a query for the cookie notice with the selector returns \verb|null|
-    \item the cookie notice is not visible anymore (e.g., if the notice has or inherits an \verb|opacity| of 0, has or inherits the CSS \verb|visibility| of hidden or collapse, or has an area of 1 pixel or less) 
-    \item the notice still exists and is visible, but its text content or the dimensions (height and width) have \emph{not} changed after the interactive element click
+    \item a query for the cookie notice with the selector returns \verb|null|,
+    \item the cookie notice is not visible anymore (e.g., if the notice has or inherits an \verb|opacity| of 0, has or inherits the CSS \verb|visibility| of hidden or collapse, or has an area of 1 pixel or less),
+    \item the notice still exists and is visible, but \emph{neither} its text content nor the dimensions (height and width) have changed after the interactive element click, or
     \item the cookie notice is covered by another element. CookieAudit runs \verb|elementFromPoint()| at the coordinates of the cookie notice center. If the returned element is not the notice or contained in the notice, we consider the notice covered.
 \end{itemize}
 

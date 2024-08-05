@@ -8,7 +8,7 @@ To understand the implementation details in \cref{ch:implementation}, we will gi
 
 Browser extensions are programs that can extend and change the functionality of browsers.
 They are built using web technologies (JavaScript, HTML, CSS) and can use APIs provided by the browser.
-The APIs of Chromium based browsers (e.g., Chrome and Edge) overlap in large parts with the APIs of Mozilla's Firefox. Apple's Safari sometimes differs more significantly.
+The APIs of Chromium based browsers (e.g., Chrome and Edge) overlap in large parts with the APIs of Mozilla's Firefox, while Apple's Safari sometimes differs more significantly.
 As a result, many extensions can run in several browser environments.
 
 When building browser extensions, developers have to split up their code in a predefined (as specified by Manifest Version 3~\cite{manifestv3} for Chromium based browsers).
@@ -24,8 +24,8 @@ A visualization of the building blocks and their interactions is shown in \cref{
 
 \subsection{Extension Service Workers} \label{subsec:service-workers}
 The Extension Service Worker is the central location for business logic.
-By having access to the full WebExtensions API, it is the place to define event listeners\footnote{
-By registering event listeners at the beginning of the service worker, developers can define code that is to be run on browser, tab or extension events to handle e.g., extension messages or the user visiting a different URL.},
+By having access to the full WebExtensions API, it is the place to define event listeners,\footnote{
+By registering event listeners at the beginning of the service worker, developers can define code that is to be run on browser, tab or extension events to handle, e.g., extension messages or the user visiting a different URL.}
 send and receive messages to and from the extension building blocks 
 or run time intensive computations~\cite[Ch. 4]{frisbie2023browser}.
 Service workers operate asynchronously on a separate thread, preventing interference with website execution. 
@@ -34,19 +34,18 @@ They are ephemeral, terminating when idle and restarting to handle events. Devel
 \subsection{Content Scripts} \label{subsec:content-scripts}
 Content scripts are JavaScript programs injected into web pages. 
 They can access and modify the page's HTML structure and CSS styles.
-By default\footnote{
+By default,\footnote{
 Developers can deactivate this isolation by setting the execution world to \texttt{MAIN}. Then, the content script will be able to e.g., read variables of the web page JavaScript.
-}, content scripts run in an isolated environment, separate from the page's own JavaScript.
+} content scripts run in an isolated environment, separate from the page's own JavaScript.
 This isolation prevents direct access between the content script and page script.
 Variables are not shared, and functions from one context cannot be called by the other.
-Content scripts have limited access to WebExtensions API. 
-For example, they cannot change the current tab's URL.
-To interact with the rest of the extension, content scripts use messaging and a shared key-value store (see \cref{subsec:storage}).
+Content scripts have limited access to WebExtensions API, for example, they cannot change the current tab's URL.
+To interact with the rest of the extension, content scripts use messaging and a shared key-value store.
 
 \subsection{Communication}
 From the perspective of the developer, the extension service worker and the different content scripts run in separate environments. 
-As a result variables and functions cannot be accessed across those boundaries.
-Instead, browsers provide the messaging API to send and listen for messages (example in \cref{fig:message-passing}).
+As a result, variables and functions cannot be accessed across those boundaries.
+Instead, browsers provide the messaging API to send and listen for messages, see the example in \cref{fig:message-passing}.
 
 \begin{figure}
 	\centering
@@ -89,26 +88,27 @@ We have developed CookieAudit according to Manifest version 3~\cite{manifestv3}.
 It is the newest specification of the extensions API for Chromium based browsers.
 Compared to Manifest version 2, it includes API changes and restrictions aimed to increase the security and performance of extensions.
 Version 3 has forced some developers to make considerable changes to their extensions.
-We will present the some breaking changes between Manifest version 2 and 3.
+We will present the some breaking changes between Manifest versions 2 and~3.
 
 \subsubsection{Background Scripts to Service Workers}
 In Manifest version 2 developers could use \verb|background scripts| which effectively were non-visible, persistent web pages.
 Many extensions developed for manifest version 2 used the fact that background scripts are never terminated and global variables of the background script are accessible from the popup.
 As explained in \cref{subsec:service-workers}, developers cannot rely on those characteristics anymore.
-The migration to manifest version 3 sometimes required considerable changes in the architecture of extensions\footnote{
-The switch to service workers in the Bitwarden password manager greatly increased complexity~\cite{gonzalez2024bitwarden}}.
+The migration to manifest version 3 sometimes required considerable changes in the architecture of extensions.\footnote{
+The switch to service workers greatly increased the complexity in the Bitwarden password manager extension~\cite{gonzalez2024bitwarden}}
 
 \subsubsection{Execution of Arbitrary Strings}
 The execution of arbitrary strings with the \verb|eval()| function can be used for security exploits as shown by Carlini et al.~\cite{carlini2012evaluation}.
 To solve this issue, it is no longer possible to evaluate and execute strings using methods such as \verb|eval()|, or \verb|new Function()|.
-It is still possible to evaluate and execute WebAssembly\footnote{WebAssembly is a binary instruction format designed as a fast, safe compilation target for languages like C/C++. It provides JavaScript interoperability and runs in web browsers~\cite{haas2017wasm}.}, by specifying \verb|wasm-unsafe-eval| in the extension manifest.
+It is still possible to evaluate and execute WebAssembly,\footnote{WebAssembly is a binary instruction format designed as a fast, safe compilation target for languages like C/C++. It provides JavaScript interoperability and runs in web browsers~\cite{haas2017wasm}.} by specifying \verb|wasm-unsafe-eval| in the extension manifest.
 This is necessary for many performance critical applications, such as the client-side inference of AI models.
 
-Other breaking changes introduced in Manifest version 3 are 
+\subsubsection{Other}
+Other breaking changes introduced in Manifest version 3 are:
 \begin{itemize}
-    \item limitations to the inspection and modification of live requests
-    \item no more execution of remotely hosted code
-    \item renaming and restructuring of certain WebExtensions API functions
+    \item limitations to the inspection and modification of live requests,
+    \item no more execution of remotely hosted code, and
+    \item renaming and restructuring of certain WebExtensions API functions.
 \end{itemize}
 
 %\color{orange}
@@ -132,5 +132,5 @@ This is done by creating a unique, identifying key for each user and storing it 
 \section{General Data Protection Regulation and ePrivacy Directive} \label{sec:legal}
 Both the General Data Protection Regulation (GDPR)~\cite{gdpr2016} and ePrivacy Directive~\cite{privacydirective2016} have regulated the processing of personal information for entities targeting people inside the European Union.
 The GDPR generally requires a legal basis defined in Article 6 for the processing of personally identifiable information such as names, identification numbers or location data.
-If an entity such as a company wants to use the data for analytics or advertising, the user has to provide consent that is "freely given, specific, informed and unambiguous indication of the data subject's agreement to the processing of personal data relating to him or her" (Recital 32 GDPR).
-The 2002 ePrivacy Directive similarly requires consent for the usage of technologies like cookies, except in cases where they are necessary\footnote{An example of a functionally required cookie would be a token to let the user stay signed into his account across browser sessions.} for the functionality of a website.
+If an entity such as a company wants to use the data for analytics or advertising, the typical required legal basis for collection and processing of such data is the user's consent. This consent must be ``freely given, specific, informed and unambiguous indication of the data subject's agreement to the processing of personal data relating to him or her'' (Recital 32 of the GDPR).
+The consent requirement for technologies like cookies stems from the Article 5(3) of the 2002 ePrivacy Directive. The only exception are cases where the data collection and processing is strictly necessary to provide the service. An example of a functionally required cookie would be a token to let the user stay signed into his account across browser sessions.

@@ -1,16 +1,16 @@
 \chapter{Related Work}
 
 Several studies have investigated the violations of privacy-regulations by websites.
-The impact of the 2018 GDPR (see \cref{sec:legal}) has been a particular focus of research.
+The impact of the 2018 GDPR has been a particular focus of research.
 The meta-study by Kretschmer et al.~\cite{kretschmer2021cookie} provides an overview into the observed, quantitative effects on cookie compliance and privacy policies.
 
-Two studies are especially relevant to our work:
+The following two studies are especially relevant to our work.
 
 Bollinger et al.~\cite{bollinger2022automating} study cookie consent practices and GDPR compliance on websites using specific Consent Management Platforms (CMPs). 
 They observe that 69.7\% of websites set non-essential cookies before obtaining user consent. 
 For their analysis, they develop a gradient boosting model to classify cookies into Essential, Functional, Analytics, and Advertising categories.
 
-Building on this, Bouhoula et al.~\cite{bouhoula2023automated} create a fully automated, CMP independent approach for large-scale analysis of GDPR cookie compliance. 
+Building on this, Bouhoula et al.~\cite{bouhoula2023automated} create a fully automated, CMP-independent approach for large-scale analysis of GDPR cookie compliance. 
 In addition to using the cookie classification model by Bollinger et al., they developed NLP models to analyze cookie notice text and interactive elements. 
 In their comprehensive set of 97k popular websites targeting EU users, they find 65.4\% of pages still collecting user data after an explicit rejection.
 
@@ -40,7 +40,7 @@ It was restricted to TCF cookie notices and in particular TCF version 1 (v2.2 is
 As of July 2024, the development of Cookie Glasses is abandoned.
 
 \subsection{Privacy Pioneer}
-\emph{Privacy Pioneer} (by Zimmeck et al.~\cite{zimmeck2024pioneer}) is a Firefox-only browser extension for real-time detection of GDPR relevant data collection.
+Zimmeck et al.~\cite{zimmeck2024pioneer} designed \emph{Privacy Pioneer}, a Firefox-only browser extension for real-time detection of GDPR relevant data collection.
 The extension monitors web traffic by analyzing HTTP messages using the \verb|webRequest| API.
 It searches the traffic for location information, monetization practices, tracking methods and personal data. 
 For this, it uses a combination of regular expression matching, URL list comparisons and a machine learning model trained to detect location data.

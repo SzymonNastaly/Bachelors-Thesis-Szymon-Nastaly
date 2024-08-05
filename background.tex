@@ -101,7 +101,7 @@ The switch to service workers in the Bitwarden password manager greatly increase
 \subsubsection{Execution of Arbitrary Strings}
 The execution of arbitrary strings with the \verb|eval()| function can be used for security exploits as shown by Carlini et al.~\cite{carlini2012evaluation}.
 To solve this issue, it is no longer possible to evaluate and execute strings using methods such as \verb|eval()|, or \verb|new Function()|.
-It is still possible to evaluate and execute WebAssembly\footnote{WebAssembly is an assembly language that can be compiled to from languages like C++ or Rust. It provides high performance but also easy interfacing between JavaScript and WebAssembly functions~\cite{a2024webassembly}.}, by specifying \verb|wasm-unsafe-eval| in the extension manifest.
+It is still possible to evaluate and execute WebAssembly\footnote{WebAssembly is a binary instruction format designed as a fast, safe compilation target for languages like C/C++. It provides JavaScript interoperability and runs in web browsers~\cite{haas2017wasm}.}, by specifying \verb|wasm-unsafe-eval| in the extension manifest.
 This is necessary for many performance critical applications, such as the client-side inference of AI models.
 
 Other breaking changes introduced in Manifest version 3 are 
@@ -111,7 +111,23 @@ Other breaking changes introduced in Manifest version 3 are
     \item renaming and restructuring of certain WebExtensions API functions
 \end{itemize}
 
+%\color{orange}
+\section{Cookies}
+HTTP Cookies are small pieces of text data stored in a user's browser when visiting websites. 
+They are initially created by web servers, sent to clients, and stored by browsers. 
+Each cookie is associated with a specific domain.
+\emph{First-party} cookies are associated with the domain of the website being visited.
+For example, when visiting \verb|news.example|, a cookie may be set with that same domain.
+\emph{Third-party} cookies are associated with domains different from the website being visited. 
+For instance, if \verb|news.example| displays an advertisement served from \verb|ads.example|, the ad server can set cookies with the \verb|ads.example| domain.
+Cookies are automatically sent back to their originating servers with every HTTP request to that domain. 
+This adds state to the otherwise stateless nature of HTTP.
 
+Cookies serve various purposes. 
+They can provide essential functionality, such as storing user authentication data. 
+However, they can also be used to track users across different websites for analytics and advertising purposes.
+This is done by creating a unique, identifying key for each user and storing it as a cookie.
+\color{black}
 
 \section{General Data Protection Regulation and ePrivacy Directive} \label{sec:legal}
 Both the General Data Protection Regulation (GDPR)~\cite{gdpr2016} and ePrivacy Directive~\cite{privacydirective2016} have regulated the processing of personal information for entities targeting people inside the European Union.

@@ -23,7 +23,7 @@ Next, we present some approaches to find cookie notices in websites.
 \subsection{Automatic Selection}
 \subsubsection{Crowd-sourced Selectors}
 HTML elements can be identified with \emph{selectors}. 
-Crowd-sourced efforts, such as EasyList Cookie (\href{https://github.com/easylist/easylist}{github.com/easylist/easylist}), maintain lists of cookie notice selectors.
+Crowd-sourced efforts, such as EasyList Cookie, maintain lists of cookie notice selectors.
 Automated crawlers by Kampanos et al.~\cite{kampanos2021accept} and Bouhoula et al.~\cite{bouhoula2023automated} have used EasyList to find potential cookie notices on websites.
 
 \subsubsection{Stack Level}
@@ -51,17 +51,20 @@ An example can be seen in \cref{fig:screenshot-selection}.
 	\label{fig:screenshot-selection}
 \end{figure}
 
-The picker is implemented as a \emph{Content Script}. 
+The picker is implemented as a \emph{content script}. 
 As explained in \cref{subsec:content-scripts}, content scripts are JavaScript programs that can interact with the web page.
 
 The activated picker tool listens for cursor movement by the user. 
 On movement, it reads the coordinates of the cursor and determines the HTML element at that position.
-The picker changes the styling of the determined element to provide users with visual feedback.
-By clicking on the highlighted element, users can make an initial selection.
+The picker changes the styling of the determined element to provide visual feedback.
 CookieAudit needs users to select the element corresponding to the complete cookie notice. 
 Sometimes the desired element is only a container whose area is entirely filled out by the children (see \cref{fig:notice-fillout}).
 In this case, every click inside the notice will select a child element rather than the entire notice container. 
 Therefore, users won't be able to select the whole notice by simply hovering the cursor.
+As a solution we implement a context menu that appears after the user has clicked on an element.
+With the menu, the user can traverse up the DOM tree to the element containing the whole cookie notice.
+In the end, the selection can be confirmed via the context menu.
+
 
 \begin{figure}
 	\centering
@@ -92,10 +95,6 @@ Therefore, users won't be able to select the whole notice by simply hovering the
 	\caption{Any location in the left notice will map to one of the children. Only the white area in the right notice will be mapped to the whole notice.}
 	\label{fig:notice-fillout}
 \end{figure}
-
-As a solution we implemented a context menu that appears after the user has clicked on an element.
-With the menu, the user can traverse up the tree to the element containing the whole cookie notice.
-In the end, the selection can be confirmed with a separate button.
 
 Because of the heterogeneity of the web, we encountered several edge cases resulting from the implementation details of cookie notices. 
 Next, we will present our solutions.

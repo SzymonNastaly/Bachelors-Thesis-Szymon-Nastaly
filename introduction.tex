@@ -16,12 +16,21 @@ An overview of large-scale studies regarding the adherence to GDPR rules was com
 It can be challenging to verify compliance of specific websites for web page operators, users and regulators with these regulations.
 Cookie notices often have different designs and implementation details.
 This complicates automatic verification whether a notice defines the cookie purposes and offers possibilities to configure or reject non-necessary cookies.
-Large-scale studies have therefore relied on heuristics, manual annotation and machine learning models~\cite{kretschmer2021cookie, bouhoula2023automated}.
+Possible approaches include heuristics, manual annotation and machine learning models~\cite{kretschmer2021cookie, bouhoula2023automated}.
 Similarly, recognizing what cookies are used for is not trivial~\cite{sanchez_rola2019can, bollinger2022automating}.
+Those issues become apparent in previous large-scale studies:
+Nouwens et al.~\cite{nouwens2020dark} restrict their study to websites implementing five popular Consent Management Platforms (\emph{CMP}).
+After collecting data from 680 websites from the United Kingdom they find that only 11.80\% of cookie notices met basic GDPR requirements (namely, no pre-ticked optional boxes, simple way to reject and explicit consent).
+Matte et al.~\cite{matte2020cookiebannersrespectchoice} focus on cookie notices adhering to the IAB TCF specification.
+They describe violations such as "Implicit consent prior to interaction" in 10\% of websites.
 
-Tools designed for users to audit specific websites are either fully manual and labor intensive~\cite{gorin2024edpb}, can only automatically analyze cookie notices by specific Consent Management Platforms (\emph{CMP}), require IAB TCF compliance~\cite{matte2020cookiebannersrespectchoice}, or only provide rudimentary analysis~\cite{cookie_information2019cookie}.
+Similarly, tools designed for users to audit specific websites are either fully manual and labor intensive~\cite{gorin2024edpb}, can only automatically analyze cookie notices by specific CMPs, require IAB TCF compliance~\cite{matte2020cookiebannersrespectchoice}, or only provide rudimentary analysis~\cite{cookie_information2019cookie}.
 
-\section{Our Work}
-We aim to provide a tool that is both applicable on a wide variety of websites
-We aim to provide a general tool that can be used to audit the cookie usage of websites for compliance with GDPR regulation.
-We address the limitations of previous tools which were restricted to certain Consent Management Platforms (\emph{CMP}), required IAB TCF compliance~\cite{matte2020cookiebannersrespectchoice}
+\subsubsection{Our Work}
+In our work, we address the limitations of previous auditing projects.
+We provide a tool that offers an in-depth analysis, can be run on a wide variety of websites and is mostly automatic.
+%For the analysis of cookie notices we will use NLP models developed by Bouhoula et al.~\cite{bouhoula2023automated} and the classification of cookies will be done with models developed by Bollinger et al.~\cite{bollinger2022automating}.
+We use NLP models by Bouhoula et al~\cite{bouhoula2023automated} for the cookie notice analysis and gradient-boosting models by Bollinger et al.~\cite{bollinger2022automating} for the cookie classification.
+Using them, we develop a browser extension that, requiring only minimal user involvement, interacts with a specific web page to audit its cookie compliance with the GDPR.
+
+\subsubsection{Thesis Outline}

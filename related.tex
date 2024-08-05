@@ -1,15 +1,25 @@
 \chapter{Related Work}
 
-\textcolor{red}{wip}
+Several studies have investigated the violations of privacy-regulations by websites.
+The impact of the 2018 GDPR (see \cref{sec:legal}) has been a particular focus of research.
+The meta-study by Kretschmer et al.~\cite{kretschmer2021cookie} provides an overview into the observed, quantitative effects on cookie compliance and privacy policies.
 
-\section{Evaluation of broad GDPR Compliance}
-Since the introduction of the GDPR (see \cref{sec:legal}) there has been research that examined the changes and compliance of websites.
-\textcolor{red}{We have to name some concrete research that spans: non-interacting testing, manual testing, CMP focused testing, maybe also country focused testing.}. 
-Those papers have aimed to show a summarized pictured of adherence across many websites.
+Two studies are especially relevant to our work:
+
+Bollinger et al.~\cite{bollinger2022automating} study cookie consent practices and GDPR compliance on websites using specific Consent Management Platforms (CMPs). 
+They observe that 69.7\% of websites set non-essential cookies before obtaining user consent. 
+For their analysis, they develop a gradient boosting model to classify cookies into Essential, Functional, Analytics, and Advertising categories.
+
+Building on this, Bouhoula et al.~\cite{bouhoula2023automated} create a fully automated, CMP independent approach for large-scale analysis of GDPR cookie compliance. 
+In addition to using the cookie classification model by Bollinger et al., they developed NLP models to analyze cookie notice text and interactive elements. 
+In their comprehensive set of 97k popular websites targeting EU users, they find 65.4\% of pages still collecting user data after an explicit rejection.
+
 
 \section{Inspection of Individual Web Pages}
-There have also been tools aimed at users for evaluating the compliance of individual websites. 
-They have also lacked in generality (because they focused on certain CMPs), ...
+So far researchers have mostly developed large-scale approaches to investigate general trends in GDPR compliance. 
+An overview of many of those studies is presented by Bouhoula et al.~\cite{bouhoula2023automated}.
+At the same time there is a need by website operators but also regulators for auditing tools that verify compliance of websites.
+Next, we will give an overview of the existing tools while also highlighting their particular limitations.
 
 \subsection{European Data Protection Board Website Auditing Tool}
 \emph{EDBP WAT} is an auditing tool developed by Jérôme Gorin for the European Data Protection Board~\cite{gorin2024edpb}.

@@ -22,7 +22,12 @@ Next, we present some approaches to find cookie notices in websites.
 
 \subsection{Automatic Selection}
 
-
+\color{orange}
+Approaches to automated selection will always be limited in their accuracy.
+This stems from the wide variety of notices in the internet - there are seemingly infinite ways of implementing them in HTML, JavaScript.
+There will always be edge-cases, we have even seen in manual testing websites with multiple cookie notices.
+Even in the work by Bouhoula et al.~\cite{bouhoula2023automated} which uses advanced approaches for automatic selection and improves in both accuracy and precision over previous work, it is not perfect (100.0\% precision and 86.9\% recall).
+\color{black}
 
 \subsubsection{Crowd-Sourced Selectors}
 HTML elements can be identified with \emph{selectors}. 
@@ -99,7 +104,8 @@ In the end, the selection can be confirmed via the context menu.
 	\label{fig:notice-fillout}
 \end{figure}
 
-Because of the heterogeneity of the web, we encountered several edge cases resulting from the implementation details of cookie notices. 
+The complexity of both HTML and JavaScript results in many possible ways of implementing cookie notices.
+Because of those implementation details, we encountered several edge cases during the manual testing of CookieAudit.
 Next, we will present our solutions.
 
 \subsubsection{Inline Frame}
@@ -111,13 +117,11 @@ To enable users to select the cookie notice, we inject the \emph{picker tool} co
 A shadow DOM separates elements inside of it from the influence of the main document's JavaScript and CSS~\cite{shadowDomMdn}.
 Some developers use this feature to integrate cookie notices into their web page.
 This encapsulation prevents our picker content script from directly accessing the cookie notice elements. 
-To address this, we implement a solution during user notice selection:
-
+To address this, we implement a solution during user notice selection.
 As described before, we continuously query for the element that is located at the user's cursor coordinates.
-When a user hovers over an element within a shadow DOM, this query will return the root of the shadow DOM (the \emph{shadow root}). 
+When a user hovers over an element within a shadow DOM, this query will return the root of the shadow DOM (\emph{shadow root}). 
 We then check if the element is indeed a shadow root by reading the \verb|shadowRoot| property of the HTML element.
-If so, we explicitly enter the shadow DOM context and query for the element at the user's cursor coordinates. 
-
+If so, we explicitly enter the shadow DOM context and query for the element at the user's cursor coordinates once again. 
 
 \subsubsection{Dialog Element}
 The \verb|dialog| element is an HTML element that can be used to build dialog boxes such as cookie notices.
@@ -128,10 +132,9 @@ Therefore, we have implemented the menu with a \verb|dialog| element.
 By opening our dialog after the cookie notice renders, we ensure that the menu will be visible and accessible to CookieAudit users.
 
 \section{Cookie Notice Analysis}
-After detecting the cookie notice, CookieAudit analyzes its text and buttons.
-CookieAudit automatically checks if the text inside a cookie notice declares the actual cookie usage properly. Secondly, it classifies the buttons by their functionality, e.g., \emph{Open Settings}.
-
-We use functionality implemented in the automated crawler by Bouhoula et al.~\cite{bouhoula2023automated} to extract and classify the elements of the cookie notice. 
+For the analysis of a selected cookie notice we rely on the  extraction and classification functionality developed by Bouhoula et al.~\cite{bouhoula2023automated}.
+We use their NLP models to detect declared cookie purposes in the cookie notice text and to classify interactive elements of the notice for later interaction.
+In case of a detected \emph{Settings} button we additionally analyze the corresponding settings.
 
 \subsection{Extraction} \label{subsec:extraction}
 To extract the cookie notice text, we iterate through all visible elements inside the notice and concatenate their text content.
@@ -147,8 +150,12 @@ Furthermore we consider elements that, when hovered over, change the mouse to a 
 The last criterion was added based on manual testing, as it captured some interactive elements missed by the other rules in rare cases.
 
 \subsection{Classification}
+\color{orange}
+The \enquote{Declared purpose detection model} by Bouhoula et al.~\cite{bouhoula2023automated}
+
 We then process the extracted data to evaluate, whether the text correctly declares the cookie purpose and the function of the interactive elements.
-We rely on the machine learning models developed by Bouhoula et al.~\cite{bouhoula2023automated} for the classificatoin
+We rely on the machine learning models developed by Bouhoula et al.~\cite{bouhoula2023automated} for the classification
+\color{black}
 
 \subsection{Exploration}
 Cookie notices can offer additional settings.

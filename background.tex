@@ -4,14 +4,14 @@ This chapter presents the technical foundations of browser extension development
 
 \section{Browser Extensions}
 We implemented CookieAudit as a browser extension.
-To understand the implementation details in \cref{ch:implementation}, we will give an overview about the architecture and implementation of browser extensions.
+To understand the implementation details in \cref{ch:implementation}, we will give an overview of the architecture and implementation of browser extensions.
 
 Browser extensions are programs that can extend and change the functionality of browsers.
 They are built using web technologies (JavaScript, HTML, CSS) and can use APIs provided by the browser.
-The APIs of Chromium based browsers (e.g., Chrome and Edge) overlap in large parts with the APIs of Mozilla's Firefox, while Apple's Safari sometimes differs more significantly.
+The APIs of Chromium-based browsers (e.g., Chrome and Edge) overlap in large parts with the APIs of Mozilla's Firefox, while Apple's Safari sometimes differs more significantly.
 As a result, many extensions can run in several browser environments.
 
-When building browser extensions, developers have to split up their code in a predefined (as specified by Manifest Version 3~\cite{manifestv3} for Chromium based browsers).
+When building browser extensions, developers have to split up their code in a predefined (as specified by Manifest Version 3~\cite{manifestv3} for Chromium-based browsers).
 We will first explain the different parts of a general browser extension architecture and detail the challenges posed by Manifest V3 in \cref{subsec:manifest-v3}.
 A visualization of the building blocks and their interactions is shown in \cref{fig:extension-architecture}.
 
@@ -25,18 +25,18 @@ A visualization of the building blocks and their interactions is shown in \cref{
 \subsection{Extension Service Workers} \label{subsec:service-workers}
 The Extension Service Worker is the central location for business logic.
 By having access to the full WebExtensions API, it is the place to define event listeners,\footnote{
-By registering event listeners at the beginning of the service worker, developers can define code that is to be run on browser, tab or extension events to handle, e.g., extension messages or the user visiting a different URL.}
-send and receive messages to and from the extension content scripts and popup
+By registering event listeners at the beginning of the service worker, developers can define code that is to be run on browser, tab, or extension events to handle, e.g., extension messages or the user visiting a different URL.}
+send and receive messages to and from the content scripts and popup
 or run time intensive computations~\cite[Ch. 4]{frisbie2023browser}.
 Service workers operate asynchronously on a separate thread, preventing interference with website execution. 
 They are ephemeral, started by event handlers and terminated when idle.
-Developers must persist important application state to storage (see \cref{subsec:storage}) rather than relying on in-memory variables, as these are reset upon termination.
+Therefore, developers must persist important application state to storage (see \cref{subsec:storage}) rather than relying on in-memory variables, as these are reset upon termination.
 
 \subsection{Content Scripts} \label{subsec:content-scripts}
 Content scripts are JavaScript programs injected into web pages. 
 They can access and modify the page's HTML structure and CSS styles.
 By default,\footnote{
-Developers can deactivate this isolation by setting the execution world to \texttt{MAIN}. Then, the content script will be able to e.g., read variables of the web page JavaScript.
+Developers can deactivate this isolation by setting the execution world to \texttt{MAIN}. Then, the content script will be able to, e.g., read variables of the web page JavaScript.
 } content scripts run in an isolated environment, separate from the page's own JavaScript.
 This isolation prevents direct access between the content script and page script.
 Variables are not shared, and functions from one context cannot be called by the other.
@@ -46,7 +46,7 @@ To interact with the rest of the extension, content scripts use messaging and a 
 \subsection{Communication}
 Since the extension service worker and the different content scripts run in separate JavaScript environments, variables and functions cannot be accessed across those boundaries.
 Instead, browsers provide the messaging API to send and listen for messages.
-For example in the context of cookie notice detection, if a content script has detected a cookie notice and needs to inform the extension service worker about it, one could send a corresponding message as in \cref{fig:message-passing}.
+For example, in the context of cookie notice detection, if a content script has detected a cookie notice and needs to inform the extension service worker about it, one could send a corresponding message as in \cref{fig:message-passing}.
 
 \begin{figure}
 	\centering
@@ -82,17 +82,17 @@ chrome.runtime.onMessage.addListener(handleMsg);
 
 \subsection{Storage} \label{subsec:storage}
 Browser extensions often need to be able to store data, even across browser restarts.
-Developers can therefore use the asynchronous\footnote{Even though JavaScript is single-threaded, its asynchronous mechanisms allow non-blocking execution, handling tasks like I/O operations without halting the main thread.} storage API to store key-value pairs serialized as JSON objects. Serializable types include primitives, Arrays, and Objects, but not Functions or \verb|HTMLElement|.
+Developers can therefore use the asynchronous\footnote{Even though JavaScript is single-threaded, its asynchronous mechanisms allow non-blocking execution, handling tasks like I/O operations without halting the main thread.} storage API to store key-value pairs serialized as JSON objects. Serializable types include primitives, arrays, and objects, but not functions or \texttt{HTMLElement}.
 
 \subsection{Manifest Version 3} \label{subsec:manifest-v3}
 We have developed CookieAudit according to Manifest version 3~\cite{manifestv3}.
-It is the newest specification of the extensions API for Chromium based browsers.
+It is the newest specification of the extensions API for Chromium-based browsers.
 Compared to Manifest version 2, it includes API changes and restrictions aimed to increase the security and performance of extensions.
 Version 3 has forced some developers to make considerable changes to their extensions~\cite{purdy2024chrome, huczynski2018ublock}, sometimes even reducing the functionality~\cite{hill2024google}.
-We will present the some breaking changes between Manifest versions 2 and 3.
+We will present some breaking changes between Manifest versions 2 and 3.
 
 \subsubsection{Background Scripts to Service Workers}
-In Manifest version 2 developers could use \verb|background scripts| which effectively were non-visible, persistent web pages.
+In Manifest version 2 developers could use \texttt{background scripts} which effectively were non-visible, persistent web pages.
 Many extensions developed for manifest version 2 used the fact that background scripts are never terminated and global variables of the background script are accessible from the popup.
 As explained in \cref{subsec:service-workers}, developers cannot rely on those characteristics anymore.
 The migration to manifest version 3 sometimes required considerable changes in the architecture of extensions.\footnote{
@@ -101,9 +101,9 @@ Furthermore, the mechanism that idle service workers that are shut down have to 
 This time to revival may be non-negligible for time sensitive extensions.
 
 \subsubsection{Execution of Arbitrary Strings}
-The execution of arbitrary strings with the \verb|eval()| function can be used for security exploits as shown by Carlini et al.~\cite{carlini2012evaluation}.
-To solve this issue, it is no longer possible to evaluate and execute strings using methods such as \verb|eval()|, or \verb|new Function()|.
-It is still possible to evaluate and execute WebAssembly,\footnote{WebAssembly is a binary instruction format designed as a fast, safe compilation target for languages like C/C++. It provides JavaScript interoperability and runs in web browsers~\cite{haas2017wasm}.} by specifying \verb|wasm-unsafe-eval| in the extension manifest.
+The execution of arbitrary strings with the \texttt{eval()} function can be used for security exploits, as shown by Carlini et al.~\cite{carlini2012evaluation}.
+To solve this issue, it is no longer possible to evaluate and execute strings using methods such as \texttt{eval()}, or \texttt{new Function()}.
+It is still possible to evaluate and execute WebAssembly,\footnote{WebAssembly is a binary instruction format designed as a fast, safe compilation target for languages like C/C++. It provides JavaScript interoperability and runs in web browsers~\cite{haas2017wasm}.} by specifying \texttt{wasm-unsafe-eval} in the extension manifest.
 This is necessary for many performance critical applications, such as the client-side inference of AI models.
 
 \subsubsection{Other}
@@ -120,9 +120,9 @@ HTTP Cookies are small pieces of text data stored in a user's browser when visit
 They are initially created by web servers, sent to clients, and stored by browsers. 
 Each cookie is associated with a specific domain.
 \emph{First-party} cookies are associated with the domain of the website being visited.
-For example, when visiting \verb|news.example|, a cookie may be set with that same domain.
+For example, when visiting \texttt{news.example}, a cookie may be set with that same domain.
 \emph{Third-party} cookies are associated with domains different from the website being visited. 
-For instance, if \verb|news.example| displays an advertisement served from \verb|ads.example|, the ad server can set cookies with the \verb|ads.example| domain.
+For instance, if \texttt{news.example} displays an advertisement served from \texttt{ads.example}, the ad server can set cookies with the \texttt{ads.example} domain.
 Cookies are automatically sent back to their originating servers with every HTTP request to that domain. 
 This adds state to the otherwise stateless nature of HTTP.
 
@@ -130,10 +130,18 @@ Cookies serve various purposes.
 They can provide essential functionality, such as storing user authentication data. 
 However, they can also be used to track users across different websites for analytics and advertising purposes.
 This is done by creating a unique, identifying key for each user and storing it as a cookie.
-\color{black}
 
 \section{General Data Protection Regulation and ePrivacy Directive} \label{sec:legal}
-Both the General Data Protection Regulation (GDPR)~\cite{gdpr2016} and ePrivacy Directive~\cite{privacydirective2016} have regulated the processing of personal information for entities targeting people inside the European Union.
-The GDPR generally requires a legal basis defined in Article 6 for the processing of personally identifiable information such as names, identification numbers or location data.
-If an entity such as a company wants to use the data for analytics or advertising, the typical required legal basis for collection and processing of such data is the user's consent. This consent must be ``freely given, specific, informed and unambiguous indication of the data subject's agreement to the processing of personal data relating to him or her'' (Recital 32 of the GDPR).
-The consent requirement for technologies like cookies stems from the Article 5(3) of the 2002 ePrivacy Directive. The only exception are cases where the data collection and processing is strictly necessary to provide the service. An example of a functionally required cookie would be a token to let the user stay signed into his account across browser sessions.
+The General Data Protection Regulation (GDPR) and the ePrivacy Directive (eDP) govern data collection and processing in the European Union (EU).
+The GDPR defines the data subject (user), controller (typically a website operator), processor (e.g., a cloud provider), and third parties as key entities involved in data processing.
+It regulates controllers within the EU as well as those who handle the personal data of EU residents.
+Both laws only regulate personal data, which is specifically defined in Article 4 of the GDPR as any information related to an \enquote{identified or identifiable natural person}.
+Browser cookies that are not strictly necessary to provide the service, on the other hand, are covered by Article 5(3) of the eDP.
+For a controller to lawfully process personal data, at least one of the six possible legal bases defined in Article 6 of the GDPR must be satisfied.
+These legal bases include consent, contractual necessity, legal obligation, vital interests, public interest, and legitimate interests.
+However, in the particular context of websites using personal data and cookies for monetization, only the basis of user consent can be used.
+Consent must be a \enquote{freely given, specific, informed, and unambiguous indication of the data subject's agreement to the processing of personal data relating to him or her} (Recital 32 of the GDPR).
+This implies that consent on websites may not be required as part of a contract (\emph{freely given}), should always be tailored to a single collection and processing purpose (\emph{specific}), based on clearly communicated practices of data collection and processing (\emph{informed}), and explicitly provided by the user, such as by clicking on a checkbox or signing up for a newsletter (\emph{unambiguous}).
+Non-compliance with the GDPR can result in severe penalties. 
+Supervisory authorities can impose fines of up to €20 million or 4\% of the organization's global annual turnover, whichever is higher. 
+These penalties underscore the importance of adhering to the GDPR's requirements.

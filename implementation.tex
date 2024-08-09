@@ -17,21 +17,20 @@ React offers a declarative programming model that keeps the displayed data synch
 
 \section{Cookie Notice Selection}
 CookieAudit is designed to automatically analyze and interact with arbitrary cookie notices. 
-However, cookie notices are implemented as standard HTML elements, which makes universal identification challenging.
-Next, we present some approaches to find cookie notices in websites.
+The initial identification of which HTML element represents the cookie notice could be done either automatically or manually by the user.
+Any approach of automatic notice selection, e.g., based on heuristics or NLP models, will be error-prone.
+On the other hand, a manual selection could provide accuracy with minimal user effort.
+Next, we will give an overview of both approaches and their limitations.
 
 \subsection{Automatic Selection}
+Any approach to automated notice selection will always be limited in its accuracy.
+For example, Bouhoula et al.~\cite{bouhoula2023automated} achieve a precision of 100\% and a recall of 86.9\%, even though the authors improve in both metrics by building upon the approaches for automatic selection of previous studies.
+Those issues fundamentally stem from the many ways of implementing cookie notices in HTML and JavaScript.
+Nevertheless, we will present some of those heuristics.
 
-\color{orange}
-Approaches to automated selection will always be limited in their accuracy.
-This stems from the wide variety of notices in the internet - there are seemingly infinite ways of implementing them in HTML, JavaScript.
-There will always be edge-cases, we have even seen in manual testing websites with multiple cookie notices.
-Even in the work by Bouhoula et al.~\cite{bouhoula2023automated} which uses advanced approaches for automatic selection and improves in both accuracy and precision over previous work, it is not perfect (100.0\% precision and 86.9\% recall).
-\color{black}
-
-\subsubsection{Crowd-Sourced Selectors}
+\subsubsection{Crowdsourced Selectors}
 HTML elements can be identified with \emph{selectors}. 
-Crowd-sourced efforts, such as EasyList Cookie, maintain lists of cookie notice selectors.
+Crowdsourced efforts, such as EasyList Cookie, maintain lists of cookie notice selectors.
 Automated crawlers by Kampanos et al.~\cite{kampanos2021accept} and Bouhoula et al.~\cite{bouhoula2023automated} have used EasyList to find potential cookie notices on websites.
 
 \subsubsection{Stack Level}
@@ -66,10 +65,10 @@ The activated picker tool listens for cursor movement by the user.
 On movement, it reads the coordinates of the cursor and determines the HTML element at that position.
 The picker changes the styling of the determined element to provide visual feedback.
 CookieAudit needs users to select the element corresponding to the complete cookie notice. 
-Sometimes the desired element is only a container whose area is entirely filled out by the children (see \cref{fig:notice-fillout}).
+Occasionally, the desired element is only a container whose area is filled out by the children (see \cref{fig:notice-fillout}).
 In this case, every click inside the notice will select a child element rather than the entire notice container. 
 Therefore, users won't be able to select the whole notice by simply hovering the cursor.
-As a solution we implement a context menu that appears after the user has clicked on an element.
+As a solution, we implement a context menu that appears after the user has clicked on an element.
 With the menu, the user can traverse up the DOM tree to the element containing the whole cookie notice.
 In the end, the selection can be confirmed via the context menu.
 
@@ -110,8 +109,8 @@ Next, we will present our solutions.
 
 \subsubsection{Inline Frame}
 An inline frame allows developers to embed another HTML context by linking to a URL~\cite{iframeMdn}.
-Some websites implement cookie notices with an \verb|iframe| that refers to a Consent Management Platform.
-To enable users to select the cookie notice, we inject the \emph{picker tool} content script not only into the original web page, but also into all \verb|iframe| elements.
+Some websites implement cookie notices with an \texttt{iframe} that refers to a Consent Management Platform.
+To enable users to select the cookie notice, we inject the \emph{picker tool} content script not only into the original web page, but also into all \texttt{iframe} elements.
 
 \subsubsection{Shadow DOM}
 A shadow DOM separates elements inside of it from the influence of the main document's JavaScript and CSS~\cite{shadowDomMdn}.
@@ -120,42 +119,56 @@ This encapsulation prevents our picker content script from directly accessing th
 To address this, we implement a solution during user notice selection.
 As described before, we continuously query for the element that is located at the user's cursor coordinates.
 When a user hovers over an element within a shadow DOM, this query will return the root of the shadow DOM (\emph{shadow root}). 
-We then check if the element is indeed a shadow root by reading the \verb|shadowRoot| property of the HTML element.
+We then check if the element is indeed a shadow root by reading the \texttt{shadowRoot} property of the HTML element.
 If so, we explicitly enter the shadow DOM context and query for the element at the user's cursor coordinates once again. 
 
 \subsubsection{Dialog Element}
-The \verb|dialog| element is an HTML element that can be used to build dialog boxes such as cookie notices.
-When opened, it displays above all elements of the website and will cover elements with arbitrary \verb|z-index| values. 
-Multiple \verb|dialog| elements are stacked based on their opening order, with the most recent dialog displayed on top.
+The \texttt{dialog} element is an HTML element that can be used to build dialog boxes such as cookie notices.
+When opened, it displays above all elements of the website and will cover elements with arbitrary \texttt{z-index} values. 
+Multiple \texttt{dialog} elements are stacked based on their opening order, with the most recent dialog displayed on top.
 If used to display a cookie notice, a dialog element would also hide our picker tool context menu.
-Therefore, we have implemented the menu with a \verb|dialog| element.
+Therefore, we have implemented the menu with a \texttt{dialog} element.
 By opening our dialog after the cookie notice renders, we ensure that the menu will be visible and accessible to CookieAudit users.
 
 \section{Cookie Notice Analysis}
-For the analysis of a selected cookie notice we rely on the  extraction and classification functionality developed by Bouhoula et al.~\cite{bouhoula2023automated}.
+For the analysis of a selected cookie notice, we rely on the extraction and classification functionality developed by Bouhoula et al.~\cite{bouhoula2023automated}.
 We use their NLP models to detect declared cookie purposes in the cookie notice text and to classify interactive elements of the notice for later interaction.
-In case of a detected \emph{Settings} button we additionally analyze the corresponding settings.
+In case of a detected \emph{Settings} button, we additionally analyze the corresponding settings.
 
 \subsection{Extraction} \label{subsec:extraction}
 To extract the cookie notice text, we iterate through all visible elements inside the notice and concatenate their text content.
 For nested elements, which are common in HTML's tree-like structure, we recursively repeat this process.
 
 To enable automated interaction with cookie notices, CookieAudit needs to identify all clickable elements.
-We will use the the criteria proposed by Bouhoula et al.~\cite{bouhoula2023automated}.
-First, we will consider only elements of type \verb|div|, \verb|span|, \verb|a|, \verb|button| or \verb|input| that fulfill one of the following criteria: 
-has the accessibility (ARIA) role \verb|button|, 
-has the attribute \verb|onclick| or
-has a non-negative \verb|tabindex|.
-Furthermore we consider elements that, when hovered over, change the mouse to a pointer.
+We will use the criteria proposed by Bouhoula et al.~\cite{bouhoula2023automated}.
+First, we will consider only elements of type \texttt{div}, \texttt{span}, \texttt{a}, \texttt{button} or \texttt{input} that fulfill one of the following criteria: 
+has the accessibility (ARIA) role \texttt{button}, 
+has the attribute \texttt{onclick} or
+has a non-negative \texttt{tabindex}.
+Furthermore, we consider elements that, when hovered over, change the mouse to a pointer.
 The last criterion was added based on manual testing, as it captured some interactive elements missed by the other rules in rare cases.
 
 \subsection{Classification}
-\color{orange}
-The \enquote{Declared purpose detection model} by Bouhoula et al.~\cite{bouhoula2023automated}
+According to the GDPR, users need to be able to form informed and explicit consent.
+Therefore, a cookie notice needs to (i) declare the purposes of its data collection and processing and (ii) provide interactive elements for the user to express his explicit consent (\emph{Accept} button) or rejection (\emph{Reject} button).
+Bouhoula et al.~\cite{bouhoula2023automated} trained the two BERT models~\cite{devlin2018bert}, the \emph{purpose detection} model and the \emph{interactive elements} model, for both classification problems.
+Next, we will explain how we integrate and use the models.
 
-We then process the extracted data to evaluate, whether the text correctly declares the cookie purpose and the function of the interactive elements.
-We rely on the machine learning models developed by Bouhoula et al.~\cite{bouhoula2023automated} for the classification
-\color{black}
+\subsubsection{Purpose Detection Model}
+
+The purpose detection model classifies sentences into either Purposes for Analytics/Advertising (profiling, advertising, custom content, analytics, and social media features) or Other Purposes (essential functionalities, offering service, and website/UX enhancement).
+Because the models only work on English input, CookieAudit first translates (if necessary) the cookie notice text using a public translation API.
+The translated text is then classified with the browser library Transformer.js~\cite{huggingface2023transformers} which makes it possible to efficiently\footnote{
+We have found the average time of a sentence classification to be 209ms. 
+To determine this, we benchmarked the classification of 1187 sentences using the purpose detection model in a Chrome extension using Transformers.js.
+The sentences are from a dataset by Santos et al.~\cite{santos2021cookie} and were also used to train the purpose detection model.
+The benchmark was done on a MacBook Pro with an Intel i5 7267U 3.10GHz CPU and 16 GB memory while no other user space programs were running.
+} run BERT models on the client.
+
+\subsubsection{Interactive Elements Model}
+CookieAudit has to understand the functionality of the interactive cookie notice elements to be able to automatically interact with them.
+The interactive elements model by Bouhoula et al. classifies the texts of buttons as either accept, reject, close, save, settings and other.
+Because it is also a BERT model we can run it, after a translation of the texts, equivalently to the purpose detection model.
 
 \subsection{Exploration}
 Cookie notices can offer additional settings.
@@ -168,7 +181,7 @@ If no interactive elements were classified as \emph{Settings}, CookieAudit alter
 In particular, the \emph{Other} elements are sorted by their y-coordinates, such that elements that are located on the bottom of the cookie notice are used.
 This simple heuristic is based on the observation that the \emph{Settings} button is often located at the bottom.
 After the \emph{Settings} have been opened and identified, CookieAudit will again proceed as for the original cookie notice, retrieving and analyzing the text and interactive elements.
-CookieAudit adds the elements of type \emph{Reject}, \emph{Close} and \emph{Save Settings} to the \textsc{ieToInteract} array as a sequence of selectors: first the \emph{Settings} element selector, then the second layer element selector. 
+CookieAudit adds the elements of type \emph{Reject}, \emph{Close} and \emph{Save Settings} to the \texttt{ieToInteract} array as a sequence of selectors: first the \emph{Settings} element selector, then the second layer element selector. 
 
 Based on the work by Bouhoula et al.~\cite{bouhoula2023automated}, we implemented the detection and handling of the following three scenarios:
 
@@ -177,10 +190,10 @@ The cookie notice settings can be displayed inside a new notice that appears, e.
 CookieAudit detects this situation if one of the following criteria holds:
 
 \begin{itemize} 
-    \item a query for the cookie notice with the selector returns \verb|null|,
-    \item the cookie notice is not visible anymore (e.g., if the notice has or inherits an \verb|opacity| of 0, has or inherits the CSS \verb|visibility| of hidden or collapse, or has an area of 1 pixel or less),
+    \item a query for the cookie notice with the selector returns \texttt{null},
+    \item the cookie notice is not visible anymore (e.g., if the notice has or inherits an \texttt{opacity} of 0, has or inherits the CSS \texttt{visibility} of hidden or collapse, or has an area of 1 pixel or less),
     \item the notice still exists and is visible, but \emph{neither} its text content nor the dimensions (height and width) have changed after the interactive element click, or
-    \item the cookie notice is covered by another element. CookieAudit runs \verb|elementFromPoint()| at the coordinates of the cookie notice center. If the returned element is not the notice or contained in the notice, we consider the notice covered.
+    \item the cookie notice is covered by another element. CookieAudit runs \texttt{elementFromPoint()} at the coordinates of the cookie notice center. If the returned element is not the notice or contained in the notice, we consider the notice covered.
 \end{itemize}
 
 To identify the settings element and start the analysis, CookieAudit activates the \emph{Cookie Notice Picker} (as described in \cref{subsec:user-aided-selection}) and lets the user manually select the settings notice.
@@ -188,14 +201,13 @@ To identify the settings element and start the analysis, CookieAudit activates t
 \subsubsection{New Web Page}
 CookieAudit stores the URL of the web page before the interactive element click and compares it to the URL of the web page after the click.
 If it has changed, CookieAudit classifies the outcome as a new notice on a separate web page.
-
-Also in this case CookieAudit starts the \emph{Cookie Notice Picker}. 
+In this case, CookieAudit starts the cookie notice picker. 
 The picker can be used to select both settings that are part of the normal flow of the web page, or displayed as a hovering dialog.
 After the user selection and subsequent settings analysis, CookieAudit returns to the URL where the scan was started.
 
 \subsubsection{Same Cookie Notice}
 If neither the criteria of a \emph{New Cookie Notice} nor \emph{New Web Page} apply, CookieAudit assumes the settings to be now contained in the original cookie notice.
-This effectively means that the original cookie notice is still visible, the contents or dimensions have changed and the URL of the web page is still the same.
+This effectively means that the original cookie notice is still visible, the contents, or dimensions have changed and the URL of the web page is still the same.
 CookieAudit directly starts the settings notice analysis without any user interaction.
 
 \section{Dark Pattern Detection}

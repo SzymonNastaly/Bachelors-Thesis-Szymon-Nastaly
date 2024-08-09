@@ -2,23 +2,32 @@
 
 Several studies have investigated the violations of privacy-regulations by websites.
 The impact of the 2018 GDPR has been a particular focus of research.
-The meta-study by Kretschmer et al.~\cite{kretschmer2021cookie} provides an overview into the observed, quantitative effects on cookie compliance and privacy policies.
+The meta-study by Kretschmer et al.~\cite{kretschmer2021cookie} provides an overview of the observed, quantitative effects on cookie compliance and privacy policies.
 
-The following two studies are especially relevant to our work.
+\section{Large-Scale Analyses}
+Based on the overview by Bouhoula et al.~\cite{bouhoula2023automated}, we will first present some studies that developed large-scale approaches to investigate general trends in GDPR compliance. 
+Many of them had a narrow scope either in the technical methods (e.g., restricted to specific CMPs, keyword-based analysis), or the investigated characteristics (e.g., only implicit consent, or existence of opt-out functionality).
+Finally, we will highlight two studies of special relevance to our work on CookieAudit. 
 
-Bollinger et al.~\cite{bollinger2022automating} study cookie consent practices and GDPR compliance on websites using specific Consent Management Platforms (CMPs). 
-They observe that 69.7\% of websites set non-essential cookies before obtaining user consent. 
-For their analysis, they develop a gradient boosting model to classify cookies into Essential, Functional, Analytics, and Advertising categories.
+Trevisan et al.~\cite{trevisan2019cookielaw} analyzed websites for implicit consent.
+In their study, they did not interact with cookie notices and considered third-party cookies to be AA cookies if they came from known\footnote{
+Trevisan et al. compared the domains to advertising lists by Ghostery and Disconnect.
+} advertising domains.
+They found that 49\% of websites created such AA cookies before any notice interaction.
+Nouwens et al.~\cite{nouwens2020dark} tested for implicit consent, forced action, and pre-checked options on 680 websites popular in the UK and using specific CMPs. 
+The researchers found only 11.8\% of websites compliant.
+Kampanos et al.~\cite{kampanos2021accept} analyzed the presence of cookie notices and opt-out functionality (i.e., a reject button) on 17k websites from the UK and Greece.
+They used a crawler with automated notice detection based on EasyList selectors and keyword-based consent option detection.
 
-Building on this, Bouhoula et al.~\cite{bouhoula2023automated} create a fully automated, CMP-independent approach for large-scale analysis of GDPR cookie compliance. 
-In addition to using the cookie classification model by Bollinger et al., they developed NLP models to analyze cookie notice text and interactive elements. 
-In their comprehensive set of 97k popular websites targeting EU users, they find 65.4\% of pages still collecting user data after an explicit rejection.
-
+Bollinger et al.~\cite{bollinger2022automating} investigated cookie consent practices and GDPR compliance on websites using specific Consent Management Platforms (CMPs). 
+They observed that 69.7\% of websites set non-essential cookies before obtaining user consent. 
+For their analysis, they developed a gradient boosting model to classify cookies into Essential, Functional, Analytics, and Advertising categories.
+Building on this, Bouhoula et al.~\cite{bouhoula2023automated} created a fully automated, CMP-independent approach for large-scale analysis of GDPR cookie compliance. 
+In addition to using the cookie classification model by Bollinger et al., they developed NLP models to analyze cookie notice texts and interactive elements. 
+In their comprehensive set of 97k popular websites targeting EU users, they found 65.4\% of pages still collecting user data after an explicit rejection.
 
 \section{Inspection of Individual Web Pages}
-So far researchers have mostly developed large-scale approaches to investigate general trends in GDPR compliance. 
-An overview of many of those studies is presented by Bouhoula et al.~\cite{bouhoula2023automated}.
-At the same time there is a need by website operators but also regulators for auditing tools that verify compliance of websites.
+Although the focus of previous research and development has been on large-scale analyses, there is a need by website operators but also regulators for auditing tools that verify compliance of websites.
 Next, we will give an overview of the existing tools while also highlighting their particular limitations.
 
 \subsection{European Data Protection Board Website Auditing Tool}
@@ -33,8 +42,8 @@ Visitors can be monitored by including an image (often invisible) from an extern
 The tool generates customizable reports to export the findings.
 
 \subsection{Cookie Glasses}
-Matte et al.~\cite{matte2020cookiebannersrespectchoice} have investigated the compliance of cookie banners implementing IAB Europe’s Transparency and Consent Framework (TCF) and found that they did not always respect the users choice.
-As part of the research the browser extension \emph{Cookie Glasses} was developed.
+Matte et al.~\cite{matte2020cookiebannersrespectchoice} have investigated the compliance of cookie banners implementing IAB Europe’s Transparency and Consent Framework (TCF) and found that they did not always respect the users' choice.
+As part of the research, the browser extension \emph{Cookie Glasses} was developed.
 It aimed to help website developers verify their compliance.
 It was restricted to TCF cookie notices and in particular TCF version 1 (v2.2 is most recent).
 As of July 2024, the development of Cookie Glasses is abandoned.

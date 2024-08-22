@@ -1,18 +1,16 @@
 \chapter{Related Work}
 
-Several studies have investigated the violations of privacy-regulations by websites.
+Several studies have investigated website violations of privacy regulations.
 The impact of the 2018 GDPR has been a particular focus of research.
 The meta-study by Kretschmer et al.~\cite{kretschmer2021cookie} provides an overview of the observed, quantitative effects on cookie compliance and privacy policies.
 
 \section{Large-Scale Analyses}
-Based on the overview by Bouhoula et al.~\cite{bouhoula2023automated}, we will first present some studies that developed large-scale approaches to investigate general trends in GDPR compliance. 
+We will first present some studies that developed large-scale approaches to investigate general trends in GDPR compliance. 
 Many of them had a narrow scope either in the technical methods (e.g., restricted to specific CMPs, keyword-based analysis), or the investigated characteristics (e.g., only implicit consent, or existence of opt-out functionality).
 Finally, we will highlight two studies of special relevance to our work on CookieAudit. 
 
 Trevisan et al.~\cite{trevisan2019cookielaw} analyzed websites for implicit consent.
-In their study, they did not interact with cookie notices and considered third-party cookies to be AA cookies if they came from known\footnote{
-Trevisan et al. compared the domains to advertising lists by Ghostery and Disconnect.
-} advertising domains.
+In their study, they did not interact with cookie notices and considered third-party cookies to be AA cookies if they came from known advertising domains, which they classified using advertising lists by Ghostery and Disconnect.
 They found that 49\% of websites created such AA cookies before any notice interaction.
 Nouwens et al.~\cite{nouwens2020dark} tested for implicit consent, forced action, and pre-checked options on 680 websites popular in the UK and using specific CMPs. 
 The researchers found only 11.8\% of websites compliant.
@@ -23,15 +21,25 @@ Bollinger et al.~\cite{bollinger2022automating} investigated cookie consent prac
 They observed that 69.7\% of websites set non-essential cookies before obtaining user consent. 
 For their analysis, they developed a gradient boosting model to classify cookies into Essential, Functional, Analytics, and Advertising categories.
 Building on this, Bouhoula et al.~\cite{bouhoula2023automated} created a fully automated, CMP-independent approach for large-scale analysis of GDPR cookie compliance. 
-In addition to using the cookie classification model by Bollinger et al., they developed NLP models to analyze cookie notice texts and interactive elements. 
-In their comprehensive set of 97k popular websites targeting EU users, they found 65.4\% of pages still collecting user data after an explicit rejection.
+In addition to building on the cookie classification model by Bollinger et al., they developed NLP models to analyze the text of cookie notices and their interactive elements. 
+In their comprehensive set of 97k popular websites targeting EU users, they found that 65.4\% of websites collected user data after an explicit rejection.
 
 \section{Inspection of Individual Web Pages}
-Although the focus of previous research and development has been on large-scale analyses, there is a need by website operators but also regulators for auditing tools that verify compliance of websites.
+There is a need by website operators but also regulators for auditing tools that verify compliance of websites.
 Next, we will give an overview of the existing tools while also highlighting their particular limitations.
 
+\subsection{CookieAudit}
+Kubicek and Zanga et al. developed the initial version of the browser extension CookieAudit~\cite{kubicek2022cookieaudit}. 
+It aims to find violations of privacy regulations of websites in cookies and cookie notices.
+Building on the work by Bollinger et al.~\cite{bollinger2022automating}, the extension detects non-essential cookies being set without proper consent.
+Furthermore, it identifies missing reject buttons in cookie notices and pre-selected consent options by using keyword-lists.
+However, this version of CookieAudit is limited in several ways.
+It requires the user to interact with the cookie notice and website during the entire scan, and it relies on hard-coded keyword-lists which are restricted to English and German.
+Moreover, some analysis functionality of cookie notice settings is restricted to specific CMPs.
+The old CookieAudit version thus lacks in universal applicability and usage ergonomics.
+
 \subsection{European Data Protection Board Website Auditing Tool}
-\emph{EDBP WAT} is an auditing tool developed by Jérôme Gorin for the European Data Protection Board~\cite{gorin2024edpb}.
+\emph{EDBP WAT} is an auditing tool developed for the European Data Protection Board~\cite{gorin2024edpb}.
 It uses a custom Chromium interface to analyze how sites collect and store browser data, as well as inspect network traffic. 
 %Users can create analysis sessions with multiple scenarios and then manually interact with the website.
 Users can record different scenarios, e.g., the rejection of cookies and subsequent manual interaction with the website.
@@ -41,17 +49,16 @@ Visitors can be monitored by including an image (often invisible) from an extern
 } and HTTP requests by matching against tracker databases.
 The tool generates customizable reports to export the findings.
 
+\subsection{Privacy Pioneer}
+Zimmeck et al.~\cite{zimmeck2024pioneer} designed \emph{Privacy Pioneer}, a browser extension for real-time detection of GDPR-relevant data collection, that works only on Firefox.
+The extension monitors web traffic by analyzing HTTP messages using the \verb|webRequest| API.
+It searches the traffic for location information, monetization practices, tracking methods, and personal data. 
+For this, it uses a combination of regular expression matching, lists of known tracker URLs, and a machine learning model trained to detect location data.
+In contrast to CookieAudit, Privacy Pioneer does not analyze cookies or cookie notices.
+
 \subsection{Cookie Glasses}
 Matte et al.~\cite{matte2020cookiebannersrespectchoice} have investigated the compliance of cookie banners implementing IAB Europe’s Transparency and Consent Framework (TCF) and found that they did not always respect the users' choice.
 As part of the research, the browser extension \emph{Cookie Glasses} was developed.
 It aimed to help website developers verify their compliance.
-It was restricted to TCF cookie notices and in particular TCF version 1 (v2.2 is most recent).
-As of July 2024, the development of Cookie Glasses is abandoned.
-
-\subsection{Privacy Pioneer}
-Zimmeck et al.~\cite{zimmeck2024pioneer} designed \emph{Privacy Pioneer}, a Firefox-only browser extension for real-time detection of GDPR relevant data collection.
-The extension monitors web traffic by analyzing HTTP messages using the \verb|webRequest| API.
-It searches the traffic for location information, monetization practices, tracking methods and personal data. 
-For this, it uses a combination of regular expression matching, URL list comparisons and a machine learning model trained to detect location data.
-In contrast to CookieAudit, Privacy Pioneer does not analyze cookies or cookie notices.
-
+It was restricted to TCF cookie notices and in particular TCF version 1 (v2.2 is the most recent one).
+As of July 2024, the Cookie Glasses extension no longer works and the development seems to be abandoned.

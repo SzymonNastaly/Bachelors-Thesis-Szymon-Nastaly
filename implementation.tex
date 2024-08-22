@@ -207,6 +207,10 @@ This effectively means that the original cookie notice is still visible, the con
 CookieAudit directly starts the settings notice analysis without any user interaction.
 
 \section{Dark Pattern Detection}
+Deceptive user interface designs that aim to manipulate user behavior and choices can be used in cookie notices.
+Nouwens et al. have found such dark patterns in cookie notices to significantly influence user behavior towards providing consent~\cite{nouwens2020dark}.
+Because some dark patterns could be considered forbidden under the GDPR in specific jurisdictions~\cite{gray2021dark}, we include detection of dark patterns as part of the CookieAudit extension.
+Specifically, we consider the same three characteristics as Bouhoula et al.~\cite{bouhoula2023automated} in our analysis: \enquote{No reject button, }, \enquote{Interface interference}, and \enquote{Forced action}.
 
 \section{Managing Page Loads and Changes}
 \section{Report Creation}

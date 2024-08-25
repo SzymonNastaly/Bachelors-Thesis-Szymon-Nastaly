@@ -1,9 +1,30 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15" version="24.7.7">
   <diagram name="Page-1" id="-wbFX1ufPjHY4BUkE4e7">
-    <mxGraphModel>
+    <mxGraphModel dx="995" dy="664" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
+        <mxCell id="DKjqjcMhb-cETUK3gWwS-2" value="&lt;pre&gt;{&lt;br&gt;&amp;nbsp; &quot;url&quot;:&quot;https://kuchnia-domowa.pl/&quot;,&lt;br&gt;&amp;nbsp; &quot;aaCookiesWONoticeInteraction&quot;:[&lt;br&gt;&amp;nbsp; &amp;nbsp; {&lt;br&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &quot;current_label&quot;:3,&lt;br&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &quot;domain&quot;:&quot;.hhkld.com&quot;,&lt;br&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &quot;label_ts&quot;:1720867500433,&lt;br&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &quot;name&quot;:&quot;uid&quot;,&lt;br&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &quot;path&quot;:&quot;/&quot;,&lt;br&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &quot;storeId&quot;:&quot;0&quot;,&lt;br&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &quot;variable_data&quot;:[&lt;br&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; {&lt;br&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &quot;expirationDate&quot;:1752403500.416968,&lt;br&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &quot;expiry&quot;:31536000.416968107,&lt;br&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &quot;host_only&quot;:false,&lt;br&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &quot;http_only&quot;:false,&lt;br&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &quot;same_site&quot;:&quot;no_restriction&quot;,&lt;br&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &quot;secure&quot;:true,&lt;br&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &quot;session&quot;:false,&lt;br&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &quot;timestamp&quot;:1720867500432,&lt;br&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &quot;value&quot;:&quot;CmX/BGaSWqwtPvGSXIYGAg==&quot;&lt;br&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; }&lt;br&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; ],&lt;br&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &quot;textLabel&quot;:&quot;Advertising&quot;&lt;br&gt;&amp;nbsp; &amp;nbsp; }&lt;br&gt;&amp;nbsp; ],&lt;/pre&gt;&lt;pre&gt;  ...&lt;br&gt;}&lt;/pre&gt;" style="rounded=0;whiteSpace=wrap;align=left;fontFamily=Courier New;fontStyle=0;fontSize=12;horizontal=1;labelBorderColor=none;labelBackgroundColor=none;strokeWidth=1;html=1;" vertex="1" parent="1">
+          <mxGeometry x="230" y="90" width="540" height="410" as="geometry" />
+        </mxCell>
+        <mxCell id="DKjqjcMhb-cETUK3gWwS-4" value="Analytics and advertising cookies set before consent" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#845C96;" vertex="1" parent="1">
+          <mxGeometry x="506" y="115" width="240" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="DKjqjcMhb-cETUK3gWwS-5" value="" style="endArrow=classic;html=1;rounded=0;fillColor=#e1d5e7;strokeColor=#9673a6;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="430" y="156" as="sourcePoint" />
+            <mxPoint x="405" y="156" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DKjqjcMhb-cETUK3gWwS-6" value="Classification by cookie classification model" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#845C96;" vertex="1" parent="1">
+          <mxGeometry x="427" y="140" width="244" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="DKjqjcMhb-cETUK3gWwS-8" value="" style="endArrow=classic;html=1;rounded=0;fillColor=#e1d5e7;strokeColor=#9673a6;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="505" y="130" as="sourcePoint" />
+            <mxPoint x="480" y="130" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>

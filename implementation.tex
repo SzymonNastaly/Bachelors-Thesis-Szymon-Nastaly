@@ -210,7 +210,101 @@ CookieAudit directly starts the settings notice analysis without any user intera
 Deceptive user interface designs that aim to manipulate user behavior and choices can be used in cookie notices.
 Nouwens et al. have found such dark patterns in cookie notices to significantly influence user behavior towards providing consent~\cite{nouwens2020dark}.
 Because some dark patterns could be considered forbidden under the GDPR in specific jurisdictions~\cite{gray2021dark}, we include detection of dark patterns as part of the CookieAudit extension.
-Specifically, we consider the same three characteristics as Bouhoula et al.~\cite{bouhoula2023automated} in our analysis: \enquote{No reject button, }, \enquote{Interface interference}, and \enquote{Forced action}.
+Specifically, we consider the same three characteristics as Bouhoula et al.~\cite{bouhoula2023automated} in our analysis: \enquote{No reject button}, \enquote{Interface interference}, and \enquote{Forced action}.
+Next, we will describe how CookieAudit detects \enquote{Interface interference} and \enquote{Forced action}.
+
+\subsection{Interface interference}
+Stöver et al.~\cite{stover2022website} define interface interference as ~\enquote{design (color, font, size) of the buttons for accepting and rejecting cookies are not equivalent.}
+To find cases of interface interference, CookieAudit compares design characteristics of \emph{positive consent options} (accept button) with all \emph{negative consent options} (reject, save, and close buttons).
+
+Typography differences of buttons can be detected by comparing the CSS attributes of the HTML elements, e.g., \texttt{font-size}.
+The dominant color of a button is influenced by many potential factors, e.g., transparency of a button, background images, or gradients.
+Therefore, CookieAudit captures a screenshot of the visible web page using the WebExtensions API and analyzes it to reliably determine the dominant colors of the buttons
+After the screenshot is taken, the extension crops the image for all buttons according to their coordinates and determines the dominant color for each consent option with a k-means analysis.
+Once all dominant colors have been identified, CookieAudit calculates the color differences between the positive and negative consent options.
+The Euclidean distance over RGB (red, green, blue) color tuples would not accurately represent the perception of humans. 
+Instead, the extension uses the $\Delta E_{ITP}$ color difference metric~\cite{ITURBT2124} which is based on a uniform color space, that is, \enquote{a color space in which equivalent numerical differences represent equivalent visual differences, regardless of location within the color space}~\cite{x_rite2024color}.
+The $\Delta E_{ITP}$ metric is defined such that a difference below 1 is not noticeable for the human eye. We consider two colors to be mismatched when their $\Delta E_{ITP}$ difference is higher than 25.
+
+\subsection{Forced action}
+Stöver et al.~\cite{stover2022website} define \enquote{Forced action} as the requirement for a user to first engage with a cookie notice before entering the website.
+In its most extreme form, this would be a \enquote{cookie wall} which forces the user to first accept all cookies and tracking technologies~\cite{bouhoula2023automated}.
+Gray et al.~\cite{gray2021dark} considers \enquote{Forced action} to be a dark pattern.
+Bouhoula et al.~\cite{bouhoula2023automated} argue that such a design is not necessarily intentional deception, as it may even raise the privacy awareness of users, according to Bakos et al.~\cite{bakos2014fineprint}.
+CookieAudit will report any detected \enquote{Forced Action} as a dark pattern.
+
+\enquote{Forced Action} prevents the user to interact with the rest of the website, e.g., clicking on links outside the cookie notice.
+First, CookieAudit samples 10 links from the website, which are located in the viewport and are visible according to their CSS attributes.
+Because the cookie notice body may cover some links but still allow most website interaction,\footnote{
+For example, a cookie notice can cover the navigation header while the body of the website is still accessible.
+} CookieAudit selects, if possible, links that are not hidden by the cookie notice body.
+Next, CookieAudit will determine whether the links are unresponsive while the cookie notice is open, but clickable after CookieAudit has provided positive consent, i.e., clicked the \textsf{Accept} button.
+For a browser extension, there is no general method to determine if a link is clickable by the user. 
+Instead, CookieAudit will approximate the \enquote{clickability} by determining whether a link is covered by another element, e.g., by a semi-transparent overlay that blocks user clicks.
+CookieAudit reports forced action if at least one link which is covered before any consent is given,\footnote{All default counts and thresholds can be configured by the user.}
+is accessible after the cookie notice is closed by CookieAudit.
 
 \section{Managing Page Loads and Changes}
+In the course of a website scan, CookieAudit repeatedly reloads the website and visits multiple subpages.
+The extension always needs to wait until all relevant content has been loaded, e.g., CookieAudit can only start analyzing the text and links in the cookie notice once all of them have been rendered in the browser.
+CookieAudit uses the WebExtensions API \texttt{tabs.onUpdated} to determine when a website is fully loaded and rendered.
+The \texttt{tabs.onUpdated} event object informs a browser extension about the loading state of the initial HTML document and its immediate resources (CSS, JavaScript, and hard-coded images).
+However, the event object does not inform CookieAudit when websites dynamically add content, which is also possible after the initial HTML document is loaded.
+The loading state, that CookieAudit receives from the WebExtensions API, is also indicated in the Chrome browser interface with a loading icon.
+\cref{fig:screen-website-loading} shows a website dynamically adding a CMP-based cookie notice after Chrome considers the website to be loaded.
+Therefore, CookieAudit must detect dynamic changes in a website's content after the initial HTML document has finished loading.
+
+CookieAudit needs to watch the whole DOM subtree rooted in the document body for changes because any update could be relevant for the website analysis.
+The \texttt{MutationObserver} interface, which is implemented in all major browsers, can be used to efficiently watch for mutations in a website's DOM tree~\cite{whatwg2024interface}.
+We configure the \texttt{MutationObserver} to monitor the document body subtree for additions or removals of child elements.
+We consider the website to be loaded when no new changes are observed for two seconds.
+Because some websites continuously make dynamic DOM changes, e.g., loading and adding new posts to a timeline, we add a general timeout of ten seconds.
+During manual testing, we observed the timeout of ten seconds to be effective.
+In all cases where it was reached because of continuous DOM changes, the websites had already finished loading all required elements\footnote{
+Depending on the stage of the scan, not only the cookie notice is required.
+For example, the navigation header is needed to find subpages of the website during the consent options testing.
+} for CookieAudit.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{media/screen_load.png}
+        \caption{The spinning loader indicates that the website is loading the initial HTML document.}
+        \label{fig:screen-load}
+    \end{subfigure}
+    
+    \vspace{1em}
+    
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{media/screen_loaded.png}
+        \caption{The initial HTML document has been loaded.}
+        \label{fig:screen-loaded}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{media/screen_loaded-dynamic.png}
+        \caption{Dynamic changes are not indicated by a change in the loading state.}
+        \label{fig:screen-loaded-dynamic}
+    \end{subfigure}
+    \caption{Website loading sequence: initial page load, HTML rendering completion, and optional dynamic content update.}
+    \label{fig:screen-website-loading}
+\end{figure}
+
 \section{Report Creation}
+After the scan, CookieAudit compiles two reports summarizing the collected data and analysis.
+The first report is a PDF file created using the JavaScript-based pdfmake library.
+Pdfmake is a document generation library for the browser that enables the convenient styling and layout of document contents, table layouts with header repetition across page breaks, and automatic download functionality that doesn't require the user to manually "print" a report document.
+
+To generate the machine-readable JSON report, CookieAudit collects all relevant data in a JavaScript object, converts it into a string and writes it into a .json text file.
+The conversion is straightforward because JSON is derived from JavaScript objects.
+The JSON report contains more data that was collected by CookieAudit, e.g., the complete cookies that resulted in violations.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{media/browser-extension-architecture.drawio.pdf}
+    \caption{The general architecture of a manifest version 3 browser extension.}
+    \label{fig:extension-architecture}
+\end{figure}
